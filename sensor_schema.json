@@ -1,0 +1,25 @@
+[
+  {
+    "sensor_id": 4,
+    "place_id": 4,
+    "technician_id": 5,
+    "sensor_code": "d",
+    "sensor_name": "d",
+    "sensor_type": "d",
+    "protocol": "d",
+    "specification": "d",
+    "installed_at": "2026-03-16",
+    "warning_threshold": 22,
+    "danger_threshold": 33,
+    "max_level": 213,
+    "created_at": "2026-03-16T12:22:27.578106",
+    "locations": {
+      "title": "Công viên nước Đầm Sen",
+      "address": "Đ. Hòa Bình/3 Đ. Bình Thới, Phường 3, Quận 11, Thành phố Hồ Chí Minh, Việt Nam",
+      "area_id": 29,
+      "latitude": 10.769084,
+      "place_id": 4,
+      "longitude": 106.635972
+    }
+  }
+]

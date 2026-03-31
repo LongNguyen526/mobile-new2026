@@ -1,0 +1,1 @@
+{"error":{"code":"PGRST200","details":"Searched for a foreign key relationship between 'sensors' and 'sensorreadings' in the schema 'public', but no matches were found.","hint":null,"message":"Could not find a relationship between 'sensors' and 'sensorreadings' in the schema cache"},"data":null,"count":null,"status":400,"statusText":"Bad Request"}

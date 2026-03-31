@@ -1,0 +1,1 @@
+{"statuscodes":500,"message":"Lỗi gửi Mail: SMTP connect failed to smtp.gmail.com:587 and fallback smtp.gmail.com:465. The operation has timed out."}
