@@ -1,5 +1,5 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
-import { useRouter, useSegments, useRootNavigationState } from 'expo-router';
+import { useRootNavigationState, useRouter, useSegments } from 'expo-router';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { apiService } from '../services/apiService';
 
 type UserRole = 'citizen' | 'admin';
@@ -43,14 +43,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     setTimeout(() => {
       const inAuthGroup = segments[0] === '(auth)';
-      
+
       if (!user && !inAuthGroup) {
         router.replace('/(auth)/login');
       } else if (user && inAuthGroup) {
         if (user.role === 'admin') {
-           router.replace('/admin/dashboard');
+          router.replace('/admin/dashboard');
         } else {
-           router.replace('/(tabs)');
+          router.replace('/(tabs)');
         }
       }
     }, 1);
@@ -59,47 +59,47 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (email: string, pass: string) => {
     try {
       const resp = await apiService.post(`/Auth/login`, { Email: email, Password: pass });
-      
+
       if (resp && resp.token) {
         apiService.setToken(resp.token);
-        
+
         let role: UserRole = 'citizen';
         try {
-           const base64Url = resp.token.split('.')[1];
-           const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-           const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-             return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-           }).join(''));
-           const payload = JSON.parse(jsonPayload);
+          const base64Url = resp.token.split('.')[1];
+          const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+          const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+          }).join(''));
+          const payload = JSON.parse(jsonPayload);
 
-           let hasRole3 = false;
-           let isAdmin = false;
+          let hasRole3 = false;
+          let isAdmin = false;
 
-           for (const key in payload) {
-               const lowerKey = key.toLowerCase();
-               const valStr = String(payload[key]).toLowerCase();
-               
-               if (lowerKey.includes('role')) {
-                   if (valStr === '1' || valStr === '2' || valStr.includes('admin')) {
-                       isAdmin = true;
-                   }
-                   if (valStr === '3' || valStr.includes('citizen')) {
-                       hasRole3 = true;
-                   }
-               }
-           }
+          for (const key in payload) {
+            const lowerKey = key.toLowerCase();
+            const valStr = String(payload[key]).toLowerCase();
 
-           if (isAdmin) {
-               throw new Error('Chỉ có người dân (Role ID 3) mới được đăng nhập trên ứng dụng di động.');
-           }
-           
-           if (!hasRole3) {
-               throw new Error('Chỉ có người dân (Role ID 3) mới được đăng nhập trên ứng dụng di động.');
-           }
-           
+            if (lowerKey.includes('role')) {
+              if (valStr === '1' || valStr === '2' || valStr.includes('admin')) {
+                isAdmin = true;
+              }
+              if (valStr === '3' || valStr.includes('citizen')) {
+                hasRole3 = true;
+              }
+            }
+          }
+
+          if (isAdmin) {
+            throw new Error('Chỉ có người dân (Role ID 3) mới được đăng nhập trên ứng dụng di động.');
+          }
+
+          if (!hasRole3) {
+            throw new Error('Chỉ có người dân (Role ID 3) mới được đăng nhập trên ứng dụng di động.');
+          }
+
         } catch (e: any) {
-           console.error("Auth validation failed", e);
-           throw new Error(e.message || "Tài khoản không hợp lệ hoặc không có quyền truy cập.");
+          console.error("Auth validation failed", e);
+          throw new Error(e.message || "Tài khoản không hợp lệ hoặc không có quyền truy cập.");
         }
 
         const loggedInUser: User = {
@@ -184,8 +184,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = async () => {
     try {
-       await apiService.post('/Auth/logout');
-    } catch (e) {}
+      await apiService.post('/Auth/logout');
+    } catch (e) { }
     apiService.setToken(null);
     setUser(null);
   };
