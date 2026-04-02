@@ -17,9 +17,6 @@ interface AuthContextType {
   login: (email: string, pass: string) => Promise<void>;
   register: (name: string, email: string, pass: string, phone: string) => Promise<void>;
   logout: () => Promise<void>;
-  verifyEmailOtp: (email: string, otp: string) => Promise<void>;
-  forgotPassword: (email: string) => Promise<void>;
-  resetPassword: (email: string, otp: string, newPassword: string) => Promise<void>;
   changePassword: (oldPassword: string, newPassword: string) => Promise<void>;
   updateProfile: (id: string, name: string) => Promise<void>;
 }
@@ -130,35 +127,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const verifyEmailOtp = async (email: string, otp: string) => {
-    try {
-      await apiService.post(`/Auth/verify-email-otp`, { Email: email, Otp: otp });
-    } catch (err: any) {
-      alert("Xác thực thất bại: " + err.message);
-      throw err;
-    }
-  };
-
-  const forgotPassword = async (email: string) => {
-    try {
-      await apiService.post(`/Auth/forgot-password`, { Email: email });
-      alert("Mã xác thực đã được gửi tới email của bạn.");
-    } catch (err: any) {
-      alert("Yêu cầu thất bại: " + err.message);
-      throw err;
-    }
-  };
-
-  const resetPassword = async (email: string, otp: string, newPassword: string) => {
-    try {
-      await apiService.post(`/Auth/reset-password`, { Email: email, Otp: otp, NewPassword: newPassword });
-      alert("Đặt lại mật khẩu thành công. Vui lòng đăng nhập lại.");
-    } catch (err: any) {
-      alert("Đặt lại mật khẩu thất bại: " + err.message);
-      throw err;
-    }
-  };
-
   const changePassword = async (oldPassword: string, newPassword: string) => {
     try {
       await apiService.post(`/Auth/change-password`, { OldPassword: oldPassword, NewPassword: newPassword });
@@ -191,7 +159,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, register, logout, verifyEmailOtp, forgotPassword, resetPassword, changePassword, updateProfile }}>
+    <AuthContext.Provider value={{ user, isLoading, login, register, logout, changePassword, updateProfile }}>
       {children}
     </AuthContext.Provider>
   );
