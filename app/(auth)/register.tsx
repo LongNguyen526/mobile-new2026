@@ -6,6 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function RegisterScreen() {
   const [name, setName] = useState('');
@@ -50,6 +51,15 @@ export default function RegisterScreen() {
           entering={FadeInUp.duration(1000).springify()} 
           style={styles.headerContainer}
         >
+          <TouchableOpacity 
+            style={styles.backButton} 
+            onPress={() => {
+              Haptics.selectionAsync();
+              router.back();
+            }}
+          >
+            <Ionicons name="arrow-back" size={28} color="#0F172A" />
+          </TouchableOpacity>
           <Text style={styles.title}>Đăng Ký</Text>
           <Text style={styles.subtitle}>Gia nhập mạng lưới FloodGuard</Text>
         </Animated.View>
@@ -161,6 +171,15 @@ const styles = StyleSheet.create({
   headerContainer: {
     alignItems: 'center',
     marginBottom: 48,
+    width: '100%',
+    position: 'relative',
+  },
+  backButton: {
+    position: 'absolute',
+    top: 5,
+    left: 0,
+    padding: 8,
+    zIndex: 10,
   },
   title: {
     fontSize: 42,

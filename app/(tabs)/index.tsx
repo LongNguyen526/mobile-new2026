@@ -108,6 +108,27 @@ export default function MapScreen() {
     return coordinates;
   };
 
+  const searchLocations = async (text: string) => {
+    try {
+      // Append Hồ Chí Minh for reliable local context, matching Google Maps resilience
+      const queryText = text.toLowerCase().includes("hồ chí minh") || text.toLowerCase().includes("hcm") ? text : text + " Hồ Chí Minh";
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(queryText)}&format=json&addressdetails=1&limit=5&countrycodes=vn`, {
+        headers: { 'User-Agent': 'FloodMonitoringApp/1.0' }
+      });
+      const data = await res.json();
+      return (data || []).map((item: any) => ({
+        title: item.name || item.display_name.split(',')[0],
+        address: item.display_name,
+        lat: parseFloat(item.lat),
+        lng: parseFloat(item.lon),
+        place_id: item.place_id.toString(),
+      }));
+    } catch (e) {
+      console.warn("Lỗi tìm kiếm API Nominatim:", e);
+      return [];
+    }
+  };
+
   React.useEffect(() => {
     fetchSensors();
     
@@ -217,9 +238,8 @@ export default function MapScreen() {
           console.warn('Lỗi lấy địa điểm ưu tiên:', e);
         }
 
-        // 2. Tìm kiếm qua API SerpApi
-        const res = await apiService.get(`/Maps/search-map?Query=${encodeURIComponent(text)}&Lat=10.7769&Lng=106.7009`);
-        let apiItems = res?.items || [];
+        // 2. Tìm kiếm qua API OpenStreetMap (thay thế backend cho tốc độ và chính xác)
+        const apiItems = await searchLocations(text);
 
         // 3. Khử trùng lặp và gộp kết quả
         const merged = [...localItems, ...apiItems];
@@ -357,28 +377,20 @@ export default function MapScreen() {
     let endPoint = destinationCoords;
 
     if (!startPoint) {
-       try {
-         const res = await apiService.get(`/Maps/search-map?Query=${encodeURIComponent(origin)}&Lat=10.7769&Lng=106.7009`);
-         if (res && res.items && res.items.length > 0 && res.items[0].lat) {
-            startPoint = { lat: res.items[0].lat, lng: res.items[0].lng };
-            setOriginCoords(startPoint);
-            setOrigin(res.items[0].title || res.items[0].address || origin);
-         }
-       } catch (e) {
-         console.warn(e);
+       const resItems = await searchLocations(origin);
+       if (resItems && resItems.length > 0 && resItems[0].lat) {
+          startPoint = { lat: resItems[0].lat, lng: resItems[0].lng };
+          setOriginCoords(startPoint);
+          setOrigin(resItems[0].title || resItems[0].address || origin);
        }
     }
 
     if (!endPoint) {
-       try {
-         const res = await apiService.get(`/Maps/search-map?Query=${encodeURIComponent(destination)}&Lat=10.7769&Lng=106.7009`);
-         if (res && res.items && res.items.length > 0 && res.items[0].lat) {
-            endPoint = { lat: res.items[0].lat, lng: res.items[0].lng };
-            setDestinationCoords(endPoint);
-            setDestination(res.items[0].title || res.items[0].address || destination);
-         }
-       } catch (e) {
-         console.warn(e);
+       const resItems = await searchLocations(destination);
+       if (resItems && resItems.length > 0 && resItems[0].lat) {
+          endPoint = { lat: resItems[0].lat, lng: resItems[0].lng };
+          setDestinationCoords(endPoint);
+          setDestination(resItems[0].title || resItems[0].address || destination);
        }
     }
 

@@ -1,6 +1,5 @@
 import { Platform } from 'react-native';
 
-// Use the remote production server API URL.
 export const API_BASE_URL = 'https://floodleveliot-be.onrender.com/api';
 
 class ApiService {
@@ -17,12 +16,10 @@ class ApiService {
   async fetch(endpoint: string, options: RequestInit = {}) {
     const headers = new Headers(options.headers || {});
     
-    // Always attach token if exists
     if (this.token) {
       headers.set('Authorization', `Bearer ${this.token}`);
     }
     
-    // Ensure content type json is set for requests unless omitted explicitly
     if (!headers.has('Content-Type') && options.method !== 'GET') {
       headers.set('Content-Type', 'application/json');
     }
@@ -37,12 +34,10 @@ class ApiService {
     try {
       const response = await fetch(url, config);
       
-      // Parse JSON
       const isJson = response.headers.get('content-type')?.includes('application/json');
       const data = isJson ? await response.json() : await response.text();
 
       if (!response.ok) {
-        // Build an error object containing the response data
         let errorMessage = response.statusText;
         
         if (data) {
@@ -68,12 +63,10 @@ class ApiService {
     }
   }
 
-  // GET helper
   get(endpoint: string) {
     return this.fetch(endpoint, { method: 'GET' });
   }
 
-  // POST helper
   post(endpoint: string, body?: any) {
     return this.fetch(endpoint, { 
       method: 'POST', 
@@ -81,7 +74,6 @@ class ApiService {
     });
   }
 
-  // PUT helper
   put(endpoint: string, body?: any) {
     return this.fetch(endpoint, { 
       method: 'PUT', 
@@ -89,7 +81,6 @@ class ApiService {
     });
   }
 
-  // DELETE helper
   delete(endpoint: string) {
     return this.fetch(endpoint, { method: 'DELETE' });
   }

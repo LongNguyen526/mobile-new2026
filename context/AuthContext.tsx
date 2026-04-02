@@ -41,7 +41,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!rootNavigationState?.key) return; // Prevents "Attempted to navigate before mounting"
     if (isLoading) return;
 
-    // Đưa navigation vào setTimeout để đảm bảo UI Stack của Expo render xong hoàn toàn
     setTimeout(() => {
       const inAuthGroup = segments[0] === '(auth)';
       
@@ -59,7 +58,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, pass: string) => {
     try {
-      const resp = await apiService.post(`/Auth/login?Email=${encodeURIComponent(email)}&Password=${encodeURIComponent(pass)}`, {});
+      const resp = await apiService.post(`/Auth/login`, { Email: email, Password: pass });
       
       if (resp && resp.token) {
         apiService.setToken(resp.token);
@@ -76,7 +75,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
            let hasRole3 = false;
            let isAdmin = false;
 
-           // Exhaustively check all claims in the JWT
            for (const key in payload) {
                const lowerKey = key.toLowerCase();
                const valStr = String(payload[key]).toLowerCase();
@@ -122,8 +120,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const register = async (name: string, email: string, pass: string, phone: string = '') => {
     try {
-      const phoneParam = phone ? `&PhoneNumber=${encodeURIComponent(phone)}` : '';
-      await apiService.post(`/Auth/register?FullName=${encodeURIComponent(name)}&Email=${encodeURIComponent(email)}&Password=${encodeURIComponent(pass)}${phoneParam}`, {});
+      const body: any = { FullName: name, Email: email, Password: pass };
+      if (phone) body.PhoneNumber = phone;
+      await apiService.post(`/Auth/register`, body);
       alert("Đăng ký thành công. Vui lòng đăng nhập.");
     } catch (err: any) {
       alert("Đăng ký thất bại: " + err.message);
@@ -133,7 +132,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const verifyEmailOtp = async (email: string, otp: string) => {
     try {
-      await apiService.post(`/Auth/verify-email-otp?Email=${encodeURIComponent(email)}&Otp=${encodeURIComponent(otp)}`, {});
+      await apiService.post(`/Auth/verify-email-otp`, { Email: email, Otp: otp });
     } catch (err: any) {
       alert("Xác thực thất bại: " + err.message);
       throw err;
@@ -142,7 +141,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const forgotPassword = async (email: string) => {
     try {
-      await apiService.post(`/Auth/forgot-password?Email=${encodeURIComponent(email)}`, {});
+      await apiService.post(`/Auth/forgot-password`, { Email: email });
       alert("Mã xác thực đã được gửi tới email của bạn.");
     } catch (err: any) {
       alert("Yêu cầu thất bại: " + err.message);
@@ -152,7 +151,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const resetPassword = async (email: string, otp: string, newPassword: string) => {
     try {
-      await apiService.post(`/Auth/reset-password?Email=${encodeURIComponent(email)}&Otp=${encodeURIComponent(otp)}&NewPassword=${encodeURIComponent(newPassword)}`, {});
+      await apiService.post(`/Auth/reset-password`, { Email: email, Otp: otp, NewPassword: newPassword });
       alert("Đặt lại mật khẩu thành công. Vui lòng đăng nhập lại.");
     } catch (err: any) {
       alert("Đặt lại mật khẩu thất bại: " + err.message);
@@ -162,7 +161,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const changePassword = async (oldPassword: string, newPassword: string) => {
     try {
-      await apiService.post(`/Auth/change-password?OldPassword=${encodeURIComponent(oldPassword)}&NewPassword=${encodeURIComponent(newPassword)}`, {});
+      await apiService.post(`/Auth/change-password`, { OldPassword: oldPassword, NewPassword: newPassword });
       alert("Đổi mật khẩu thành công.");
     } catch (err: any) {
       alert("Đổi mật khẩu thất bại: " + err.message);
