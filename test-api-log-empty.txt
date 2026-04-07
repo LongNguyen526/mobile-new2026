@@ -1,0 +1,4 @@
+{"Email":null,"Password":null} 400 {"errors":["The Email field is required.","The Password field is required."],"statuscodes":400,"message":"Bad Request"}
+{"Email":"citizen@email.com","Password":""} 400 {"statuscodes":400,"message":"Mật khẩu là bắt buộc"}
+{} 400 {"errors":["The Email field is required.","The Password field is required."],"statuscodes":400,"message":"Bad Request"}
+{"Email":"","Password":"password"} 400 {"statuscodes":400,"message":"Email là bắt buộc"}

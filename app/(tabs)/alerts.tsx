@@ -76,9 +76,11 @@ export default function AlertsScreen() {
           }
 
           let district = s.locations?.District || s.locations?.district || s.locations?.Address || s.locations?.address || 'TP.HCM';
+          const locationId = s.LocationId || s.location_id || s.place_id || s.PlaceId || '';
 
           return {
             id: sensorId.toString(),
+            locationId: locationId?.toString(),
             name: locName,
             district: district,
             status: st,
@@ -118,10 +120,10 @@ export default function AlertsScreen() {
   const openHistoryModal = (area: any) => {
     setSelectedArea(area);
     setModalVisible(true);
-    fetchHistoryForArea(area.id, area.name);
+    fetchHistoryForArea(area.id, area.name, area.locationId);
   };
 
-  const fetchHistoryForArea = async (areaId: string, areaName: string) => {
+  const fetchHistoryForArea = async (areaId: string, areaName: string, locationId?: string) => {
     try {
       setHistoryLoading(true);
       // Fetch general alerts or try to match area. We fetch recent 50 history. 
@@ -131,13 +133,16 @@ export default function AlertsScreen() {
 
       if (Array.isArray(data)) {
         // Filter locally (some history might be generic or matching ID)
-        let areaHistory = data.filter((h: any) => 
-            h.sensor_id?.toString() === areaId || 
-            h.locationId?.toString() === areaId || 
-            h.location_id?.toString() === areaId ||
-            (h.title && h.title.includes(areaName)) ||
-            (h.message && h.message.includes(areaName))
-        );
+        let areaHistory = data.filter((h: any) => {
+            const matchLocId = locationId && (h.locationId?.toString() === locationId || h.location_id?.toString() === locationId || h.place_id?.toString() === locationId);
+            return h.sensor_id?.toString() === areaId || 
+                   h.locationId?.toString() === areaId || 
+                   h.location_id?.toString() === areaId ||
+                   h.place_id?.toString() === areaId ||
+                   matchLocId ||
+                   (h.title && h.title.includes(areaName)) ||
+                   (h.message && h.message.includes(areaName));
+        });
 
         // Map the findings
         const mappedHistory = areaHistory.map((h: any) => {

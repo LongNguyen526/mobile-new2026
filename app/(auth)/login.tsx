@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, ImageBackground, ActivityIndicator } from 'react-native';
 import { useAuth } from '@/context/AuthContext';
+import * as Haptics from 'expo-haptics';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { LinearGradient } from 'expo-linear-gradient';
+import React, { useState } from 'react';
+import { ActivityIndicator, ImageBackground, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
-import * as Haptics from 'expo-haptics';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -82,15 +82,6 @@ export default function LoginScreen() {
                 onChangeText={setPassword}
                 secureTextEntry
               />
-            </View>
-
-            <View style={{ alignItems: 'flex-end', marginTop: 12 }}>
-              <TouchableOpacity onPress={() => {
-                Haptics.selectionAsync();
-                router.push('/(auth)/forgot-password' as any);
-              }}>
-                <Text style={{ color: '#0EA5E9', fontWeight: 'bold', fontSize: 13 }}>Quên mật khẩu?</Text>
-              </TouchableOpacity>
             </View>
 
             <TouchableOpacity 

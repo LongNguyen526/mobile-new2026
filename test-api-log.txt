@@ -1,0 +1,4 @@
+nonexistent@email.com 401 {"statuscodes":401,"message":"Email hoặc mật khẩu không đúng"}
+admin@email.com 401 {"statuscodes":401,"message":"Email hoặc mật khẩu không đúng"}
+test@test.com 401 {"statuscodes":401,"message":"Email hoặc mật khẩu không đúng"}
+citizen@email.com 401 {"statuscodes":401,"message":"Email hoặc mật khẩu không đúng"}
